@@ -1,80 +1,123 @@
-//model
+
+
 var model = {
-    currentCat = null,
-    //all cats objects
+    currentCat: null,
     cats: [
         {
-            clickCount = 0,
-            name: 'cat a',
-            src : 'image/434164568_fea0ad4013_z.jpg',
-            link: 'https://www.flickr.com/photos/bigtallguy/434164568'
-        },
-        {   
-            clickCount = 0,
-            name: 'cat b',
-            src : 'image/4154543904_6e2428c421_z.jpg',
-            link: 'https://www.flickr.com/photos/xshamx/4154543904'
+            clickCount : 0,
+            name : 'Tabby',
+            imgSrc : 'image/434164568_fea0ad4013_z.jpg',
+            imgAttribution : 'https://www.flickr.com/photos/bigtallguy/434164568'
         },
         {
-            clickCount = 0,
-            name: 'cat c',
-            src : 'image/22252709_010df3379e_z.jpg',
-            link: 'https://www.flickr.com/photos/kpjas/22252709'
+            clickCount : 0,
+            name : 'Tiger',
+            imgSrc : 'image/4154543904_6e2428c421_z.jpg',
+            imgAttribution : 'https://www.flickr.com/photos/xshamx/4154543904'
         },
         {
-            clickCount = 0,
-            name: 'cat d',
-            src : 'image/1413379559_412a540d29_z.jpg',
-            link: 'https://www.flickr.com/photos/malfet/1413379559'
+            clickCount : 0,
+            name : 'Scaredy',
+            imgSrc : 'image/22252709_010df3379e_z.jpg',
+            imgAttribution : 'https://www.flickr.com/photos/kpjas/22252709'
+        },
+        {
+            clickCount : 0,
+            name : 'Shadow',
+            imgSrc : 'image/1413379559_412a540d29_z.jpg',
+            imgAttribution : 'https://www.flickr.com/photos/malfet/1413379559'
+        },
+        {
+            clickCount : 0,
+            name : 'Sleepy',
+            imgSrc : 'image/9648464288_2516b35537_z.jpg',
+            imgAttribution : 'https://www.flickr.com/photos/onesharp/9648464288'
         }
-
     ]
+};
 
-}
 
-//hub
-var hub = {
-    init: function(){
-        //put the first cat input current cat for first time render
+var octopus = {
+
+    init: function() {
         model.currentCat = model.cats[0];
 
-        //init
-        catList.init();
+        catListView.init();
         catView.init();
     },
-    getCurrentCat: function(){
+
+    getCurrentCat: function() {
         return model.currentCat;
     },
-    setCurrentCat: function(index){
-        model.currentCat.index;
-    },
-    getCats: function(){
+
+    getCats: function() {
         return model.cats;
     },
-    addCounter: function(){
+
+    setCurrentCat: function(cat) {
+        model.currentCat = cat;
+    },
+
+    incrementCounter: function() {
         model.currentCat.clickCount++;
         catView.render();
     }
+};
 
-}
-//view
-var carView = {
-    init: function(){
-        this.catElem = document.querySelector('.cat');
-        this.catNameElem = document.querySelector('.name');
-        this.catImgElem = document.querySelector('.img');
-        this.countElem = document.querySelector('.count');
 
-        this.catImgElem.addEventListener('click',function(){
-            hub.addCounter();
+
+var catView = {
+
+    init: function() {
+        this.catElem = document.getElementById('cat');
+        this.catNameElem = document.getElementById('cat-name');
+        this.catImageElem = document.getElementById('cat-img');
+        this.countElem = document.getElementById('cat-count');
+
+        this.catImageElem.addEventListener('click', function(){
+            octopus.incrementCounter();
         });
+
         this.render();
     },
-    render: function(){
-        var currentCat = hub.getCurrentCat();
-        this.countElem.textContent = currentCat.clickCount;
-        this.catNameElem.textContent = currentCat.name;
-        this.catImgElem.src = currentCat.src;
-    }
 
-}
+    render: function() {
+        var currentCat = octopus.getCurrentCat();
+        this.countElem.textContent = "Click Count: "+currentCat.clickCount;
+        this.catNameElem.textContent = currentCat.name;
+        this.catImageElem.src = currentCat.imgSrc;
+    }
+};
+
+var catListView = {
+
+    init: function() {
+        this.catListElem = document.getElementById('cat-list');
+
+        this.render();
+    },
+
+    render: function() {
+        var cat, elem, i;
+        var cats = octopus.getCats();
+
+        this.catListElem.innerHTML = '';
+
+        for (i = 0; i < cats.length; i++) {
+            cat = cats[i];
+
+            elem = document.createElement('li');
+            elem.textContent = cat.name;
+
+            elem.addEventListener('click', (function(catCopy) {
+                return function() {
+                    octopus.setCurrentCat(catCopy);
+                    catView.render();
+                };
+            })(cat));
+            this.catListElem.appendChild(elem);
+        }
+    }
+};
+
+octopus.init();
